@@ -18,11 +18,33 @@
     </head>
 
     <body>
+        <!-- DATABASE CONFIG -->
+        <?php
+            // Mostrar todos los errores (útil para debugging)
+            ini_set('display_errors', 1);
+            error_reporting(E_ALL);
+
+            // Conectar a la base de datos
+            // Cambiar el servername por el que proceda: localhost, mysql (docker), dirección IP, cadena de Azure Mysql
+            $servername = "mysql";
+            $username = "asirweb";
+            $password = "qwe_123";
+            $dbname = "webasir";
+
+            $conn = new mysqli($servername, $username, $password, $dbname);
+
+            // Verificar la conexión
+            if ($conn->connect_error) {
+                die("Conexión fallida: " . $conn->connect_error);
+            }
+
+        ?>
+
         <header>
 
             <nav class="navbar navbar-expand-sm navbar-light bg-light">
                 <div class="container">
-                    <a class="navbar-brand" href="#">
+                    <a class="navbar-brand" href="./index.html">
                         <img src="assets/images/space.png" height="32px" alt="space" >
                         CFGS ASIR
                     </a>
@@ -72,8 +94,50 @@
             <div class="container">
                 <h3>Empresas para prácticas</h3>
                 <hr>
-                <button onclick="window.location.href='listado.php';">Ver Listado</button>
-                <hr>
+                
+                <div
+                    class="table-responsive"
+                >
+                    <table
+                        class="table table-secondary"
+                    >
+                        <thead>
+                            <tr>
+                                <th>Razón social</th>
+                                <th>Descripción</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                                // Consultar los datos
+                                $sql = "SELECT * FROM clientes";
+                                $result = $conn->query($sql);
+                                if ($result === false) {
+                                    die("Error en la consulta: " . $conn->error);
+                                }
+                                if ($result->num_rows > 0) {
+                                    while($row = $result->fetch_assoc()) {
+                                        echo "  <tr>
+                                                    <td>{$row['razon_social']}</td>
+                                                    <td>{$row['descripcion']}</td>
+                                                    <td>{$row['email']}</td>
+                                                    <td>{$row['telefono']}</td>
+                                                    <td>
+                                                        <div class='btn-group'>
+                                                            <a class='btn btn-outline-success btn-sm'><i class='bi bi-telephone-fill'></i> Call</a>
+                                                            <a class='btn btn-outline-primary btn-sm'><i class='bi bi-envelope-fill'></i> Mail</a>
+                                                        </div>
+                                                    </td>
+                                                </tr>";
+                                    }
+                                }            
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
                 
             </div>
 
